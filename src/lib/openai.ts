@@ -23,7 +23,7 @@ interface GeneratedTask {
 }
 
 export async function generateDailyTasks(request: TaskGenerationRequest): Promise<GeneratedTask[]> {
-  const { assessment, weakestCategories, userProfile } = request
+  const { assessment, weakestCategories } = request
   
   const categoryScores = weakestCategories.map(category => {
     const score = assessment[`${category}_score` as keyof LifeAssessment] as number

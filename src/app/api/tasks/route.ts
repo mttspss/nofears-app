@@ -64,7 +64,7 @@ export async function PATCH(request: Request) {
     }
 
     // Update task completion status
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       completed,
       updated_at: new Date().toISOString()
     }

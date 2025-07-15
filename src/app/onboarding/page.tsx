@@ -1,41 +1,42 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LifeAssessment } from '@/components/ui/life-assessment'
 import { LifeCategory } from '@/types/database'
+import { User } from '@supabase/supabase-js'
 
 export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [step, setStep] = useState<'welcome' | 'assessment' | 'processing'>('welcome')
   const router = useRouter()
   const supabase = createClient()
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/')
-        return
-      }
-      setUser(user)
-
-      // Check if onboarding is already completed
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', user.id)
-        .single()
-
-      if (profile?.onboarding_completed) {
-        router.push('/dashboard')
-      }
+  const checkAuth = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      router.push('/')
+      return
     }
+    setUser(user)
 
+    // Check if onboarding is already completed
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_completed')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.onboarding_completed) {
+      router.push('/dashboard')
+    }
+  }, [router, supabase])
+
+  useEffect(() => {
     checkAuth()
-  }, [])
+  }, [checkAuth])
 
   const handleAssessmentComplete = async (scores: Record<LifeCategory, number>) => {
     setIsLoading(true)
@@ -114,7 +115,7 @@ export default function OnboardingPage() {
   )
 }
 
-function WelcomeStep({ user, onStart }: { user: any, onStart: () => void }) {
+function WelcomeStep({ user, onStart }: { user: User, onStart: () => void }) {
   const userName = user.user_metadata?.full_name || user.user_metadata?.name || 'there'
 
   return (
@@ -127,13 +128,13 @@ function WelcomeStep({ user, onStart }: { user: any, onStart: () => void }) {
           </h1>
           <p className="text-xl text-gray-600 leading-relaxed">
             Every great comeback starts with knowing where you are. 
-            Let's take a moment to assess your current life situation across six key areas.
+            Let&apos;s take a moment to assess your current life situation across six key areas.
           </p>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-            What You'll Do Next:
+            What You&apos;ll Do Next:
           </h2>
           
           <div className="space-y-4 text-left">
@@ -257,7 +258,7 @@ function ProcessingStep() {
         <div className="bg-green-50 border border-green-200 rounded-lg p-6">
           <div className="text-4xl mb-3">🎉</div>
           <h3 className="text-lg font-semibold text-green-800 mb-2">
-            You've Taken the First Step!
+            You&apos;ve Taken the First Step!
           </h3>
           <p className="text-green-700 text-sm">
             Completing your assessment shows incredible courage. 

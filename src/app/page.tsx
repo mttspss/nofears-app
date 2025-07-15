@@ -1,22 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
-import { ArrowRight, Heart, Target, Zap, Users, Sparkles, TrendingUp } from 'lucide-react'
+import { ArrowRight, Target, Zap, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
+import { User } from '@supabase/supabase-js'
 
 export default function LandingPage() {
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const supabase = createClient()
 
+  const getUser = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    setUser(user)
+  }, [supabase.auth])
+
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-    }
     getUser()
-  }, [])
+  }, [getUser])
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
@@ -185,7 +187,7 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-lg text-gray-700 mb-2">
-              "NoFears helped me turn my lowest point into my comeback. The micro-tasks made everything feel possible."
+              &ldquo;NoFears helped me turn my lowest point into my comeback. The micro-tasks made everything feel possible.&rdquo;
             </p>
             <p className="text-gray-500">- Sarah M., Community Member</p>
           </div>
@@ -198,7 +200,7 @@ export default function LandingPage() {
               Ready to Start Your Comeback?
             </h3>
             <p className="text-xl text-gray-600 mb-8">
-              Join hundreds of people who've turned their rock bottom into their foundation for growth.
+              Join hundreds of people who&apos;ve turned their rock bottom into their foundation for growth.
             </p>
             
             <div className="space-y-4">

@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LifeWheel, LifeWheelSkeleton } from '@/components/ui/life-wheel'
-import { DailyTasks, DailyTasksSkeleton } from '@/components/ui/daily-tasks'
+import { DailyTasks } from '@/components/ui/daily-tasks'
 import { LifeAssessment, DailyTask } from '@/types/database'
-import { LogOut, RefreshCw, Plus, User, Settings } from 'lucide-react'
+import { LogOut, RefreshCw, Plus } from 'lucide-react'
+import { User } from '@supabase/supabase-js'
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [assessment, setAssessment] = useState<LifeAssessment | null>(null)
   const [tasks, setTasks] = useState<DailyTask[]>([])
   const [isLoadingAssessment, setIsLoadingAssessment] = useState(true)
@@ -17,6 +18,37 @@ export default function DashboardPage() {
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  const loadAssessment = useCallback(async () => {
+    try {
+      const response = await fetch('/api/assessment')
+      const data = await response.json()
+      setAssessment(data.assessment)
+    } catch (error) {
+      console.error('Error loading assessment:', error)
+    } finally {
+      setIsLoadingAssessment(false)
+    }
+  }, [])
+
+  const loadTasks = useCallback(async () => {
+    try {
+      const response = await fetch('/api/tasks')
+      const data = await response.json()
+      setTasks(data.tasks)
+    } catch (error) {
+      console.error('Error loading tasks:', error)
+    } finally {
+      setIsLoadingTasks(false)
+    }
+  }, [])
+
+  const loadDashboardData = useCallback(async () => {
+    await Promise.all([
+      loadAssessment(),
+      loadTasks()
+    ])
+  }, [loadAssessment, loadTasks])
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -43,38 +75,7 @@ export default function DashboardPage() {
     }
 
     checkAuth()
-  }, [])
-
-  const loadDashboardData = async () => {
-    await Promise.all([
-      loadAssessment(),
-      loadTasks()
-    ])
-  }
-
-  const loadAssessment = async () => {
-    try {
-      const response = await fetch('/api/assessment')
-      const data = await response.json()
-      setAssessment(data.assessment)
-    } catch (error) {
-      console.error('Error loading assessment:', error)
-    } finally {
-      setIsLoadingAssessment(false)
-    }
-  }
-
-  const loadTasks = async () => {
-    try {
-      const response = await fetch('/api/tasks')
-      const data = await response.json()
-      setTasks(data.tasks)
-    } catch (error) {
-      console.error('Error loading tasks:', error)
-    } finally {
-      setIsLoadingTasks(false)
-    }
-  }
+  }, [router, supabase, loadDashboardData])
 
   const handleTaskComplete = async (taskId: string, completed: boolean) => {
     try {
@@ -235,7 +236,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Today's Micro-Tasks</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Today&apos;s Micro-Tasks</h2>
                 {tasks.length > 0 && (
                   <button
                     onClick={handleGenerateNewTasks}
@@ -278,7 +279,7 @@ export default function DashboardPage() {
                     ) : (
                       <>
                         <Plus className="w-4 h-4" />
-                        <span>Generate Today's Tasks</span>
+                        <span>Generate Today&apos;s Tasks</span>
                       </>
                     )}
                   </button>
@@ -295,8 +296,8 @@ export default function DashboardPage() {
               Remember: Every Small Step Counts 🌟
             </h3>
             <p className="text-gray-700 max-w-2xl mx-auto">
-              You're not just rebuilding your life—you're creating the foundation for something amazing. 
-              Each completed task is proof that you're stronger than your circumstances.
+              You&apos;re not just rebuilding your life—you&apos;re creating the foundation for something amazing. 
+              Each completed task is proof that you&apos;re stronger than your circumstances.
             </p>
           </div>
         )}

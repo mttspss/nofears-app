@@ -9,12 +9,6 @@ interface LifeAssessmentProps {
   isLoading?: boolean
 }
 
-interface CategoryAssessment {
-  category: LifeCategory
-  score: number
-  description: string
-}
-
 export function LifeAssessment({ onComplete, initialScores = {}, isLoading = false }: LifeAssessmentProps) {
   const [scores, setScores] = useState<Record<LifeCategory, number>>(() => {
     const defaultScores: Record<LifeCategory, number> = {
@@ -174,7 +168,7 @@ export function LifeAssessment({ onComplete, initialScores = {}, isLoading = fal
       <div className="mt-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Progress</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {categories.map((category, index) => {
+          {categories.map((category) => {
             const categoryData = LIFE_CATEGORIES[category]
             const isCompleted = completedCategories.has(category)
             const isCurrent = category === currentCategory

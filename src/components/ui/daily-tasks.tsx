@@ -59,10 +59,10 @@ export function DailyTasks({ tasks, onTaskComplete, isLoading = false }: DailyTa
           <div>
             <h2 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
               <Sparkles className="w-5 h-5 text-yellow-500" />
-              <span>Today's Micro-Tasks</span>
+              <span>Today&apos;s Micro-Tasks</span>
             </h2>
             <p className="text-gray-600 text-sm">
-              Small steps, big impact. You've got this! 💪
+              Small steps, big impact. You&apos;ve got this! 💪
             </p>
           </div>
           <div className="text-right">
@@ -95,7 +95,7 @@ export function DailyTasks({ tasks, onTaskComplete, isLoading = false }: DailyTa
           )}
           {completedCount === totalTasks && (
             <p className="text-sm text-green-700 font-medium">
-              🎉 Amazing! You've completed all your tasks today. You're building a better life, one day at a time!
+              🎉 Amazing! You&apos;ve completed all your tasks today. You&apos;re building a better life, one day at a time!
             </p>
           )}
         </div>
@@ -219,7 +219,7 @@ export function DailyTasks({ tasks, onTaskComplete, isLoading = false }: DailyTa
             Incredible Work Today!
           </h3>
           <p className="text-green-700 mb-4">
-            You've completed all your micro-tasks. You're not just rebuilding your life—you're thriving! 
+            You&apos;ve completed all your micro-tasks. You&apos;re not just rebuilding your life—you&apos;re thriving! 
             Tomorrow brings new opportunities to grow even more.
           </p>
           <div className="flex items-center justify-center space-x-1 text-sm text-green-600">
