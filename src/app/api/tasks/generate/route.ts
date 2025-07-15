@@ -5,7 +5,7 @@ import { LifeCategory } from '@/types/database'
 
 export async function POST() {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -23,84 +23,70 @@ export async function POST() {
 
     if (assessmentError || !assessment) {
       return NextResponse.json(
-        { error: 'No assessment found. Please complete your life assessment first.' }, 
+        { error: 'No life assessment found. Please complete your assessment first.' },
         { status: 400 }
       )
     }
 
-    // Check if user already has tasks for today
-    const today = new Date().toISOString().split('T')[0]
-    const { data: existingTasks } = await supabase
-      .from('daily_tasks')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('assessment_id', assessment.id)
-      .gte('created_at', `${today}T00:00:00.000Z`)
-      .lt('created_at', `${today}T23:59:59.999Z`)
-
-    if (existingTasks && existingTasks.length > 0) {
-      return NextResponse.json({ 
-        message: 'Tasks already generated for today',
-        tasks: existingTasks 
-      })
-    }
-
-    // Find the two weakest categories
-    const categoryScores: Array<{ category: LifeCategory; score: number }> = [
-      { category: 'health', score: assessment.health_score },
-      { category: 'career', score: assessment.career_score },
-      { category: 'relationships', score: assessment.relationships_score },
-      { category: 'finances', score: assessment.finances_score },
-      { category: 'personal_growth', score: assessment.personal_growth_score },
-      { category: 'leisure', score: assessment.leisure_score },
+    // Find the 2 weakest categories
+    const categoryScores = [
+      { category: 'health' as LifeCategory, score: assessment.health_score },
+      { category: 'career' as LifeCategory, score: assessment.career_score },
+      { category: 'relationships' as LifeCategory, score: assessment.relationships_score },
+      { category: 'finances' as LifeCategory, score: assessment.finances_score },
+      { category: 'personal_growth' as LifeCategory, score: assessment.personal_growth_score },
+      { category: 'leisure' as LifeCategory, score: assessment.leisure_score },
     ]
 
-    const sortedCategories = categoryScores.sort((a, b) => a.score - b.score)
-    const weakestCategories = sortedCategories.slice(0, 2).map(c => c.category)
-
-    // Get user profile for personalization
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('full_name')
-      .eq('id', user.id)
-      .single()
+    const weakestCategories = categoryScores
+      .sort((a, b) => a.score - b.score)
+      .slice(0, 2)
+      .map(item => item.category)
 
     // Generate tasks using OpenAI
     const generatedTasks = await generateDailyTasks({
       assessment,
       weakestCategories,
       userProfile: {
-        name: profile?.full_name || undefined
+        name: user.user_metadata?.full_name || user.user_metadata?.name,
       }
     })
 
-    // Save tasks to database
+    // Delete existing tasks for today
+    const today = new Date().toISOString().split('T')[0]
+    await supabase
+      .from('daily_tasks')
+      .delete()
+      .eq('user_id', user.id)
+      .gte('created_at', `${today}T00:00:00.000Z`)
+      .lt('created_at', `${today}T23:59:59.999Z`)
+
+    // Insert new tasks
     const tasksToInsert = generatedTasks.map(task => ({
       user_id: user.id,
-      assessment_id: assessment.id,
       title: task.title,
       description: task.description,
       category: task.category,
       estimated_minutes: task.estimatedMinutes,
+      completed: false,
     }))
 
-    const { data: savedTasks, error: tasksError } = await supabase
+    const { data: insertedTasks, error: insertError } = await supabase
       .from('daily_tasks')
       .insert(tasksToInsert)
       .select()
 
-    if (tasksError) {
-      console.error('Error saving tasks:', tasksError)
-      return NextResponse.json({ error: 'Failed to save tasks' }, { status: 500 })
+    if (insertError) {
+      console.error('Error inserting tasks:', insertError)
+      return NextResponse.json({ error: 'Failed to save generated tasks' }, { status: 500 })
     }
 
     return NextResponse.json({ 
-      tasks: savedTasks,
-      weakestCategories,
-      message: 'Daily tasks generated successfully!'
+      tasks: insertedTasks,
+      message: `Generated ${insertedTasks.length} personalized tasks for you! 🎯`
     })
   } catch (error) {
     console.error('Error in POST /api/tasks/generate:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to generate tasks' }, { status: 500 })
   }
 } 
