@@ -72,7 +72,6 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          assessment_id: string
           title: string
           description: string
           category: LifeCategory
@@ -85,7 +84,6 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          assessment_id: string
           title: string
           description: string
           category: LifeCategory
@@ -98,7 +96,6 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          assessment_id?: string
           title?: string
           description?: string
           category?: LifeCategory
@@ -140,7 +137,6 @@ export interface LifeAssessment {
 export interface DailyTask {
   id: string
   user_id: string
-  assessment_id: string
   title: string
   description: string
   category: LifeCategory

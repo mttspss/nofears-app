@@ -40,7 +40,6 @@ create table life_assessments (
 create table daily_tasks (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references profiles(id) on delete cascade not null,
-  assessment_id uuid references life_assessments(id) on delete cascade not null,
   title text not null,
   description text not null,
   category life_category not null,
@@ -56,7 +55,6 @@ create index profiles_email_idx on profiles(email);
 create index life_assessments_user_id_idx on life_assessments(user_id);
 create index life_assessments_created_at_idx on life_assessments(created_at desc);
 create index daily_tasks_user_id_idx on daily_tasks(user_id);
-create index daily_tasks_assessment_id_idx on daily_tasks(assessment_id);
 create index daily_tasks_created_at_idx on daily_tasks(created_at desc);
 create index daily_tasks_completed_idx on daily_tasks(completed);
 create index daily_tasks_category_idx on daily_tasks(category);

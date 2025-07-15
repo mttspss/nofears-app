@@ -51,12 +51,20 @@ GUIDELINES:
 - Include a brief motivational note for each task
 - Consider that this person is rebuilding their life - be encouraging and realistic
 
+IMPORTANT: Use these EXACT category values (not labels):
+- "health" for Health & Wellness
+- "career" for Career & Work  
+- "relationships" for Relationships
+- "finances" for Finances
+- "personal_growth" for Personal Growth
+- "leisure" for Leisure & Fun
+
 RESPONSE FORMAT (JSON):
 [
   {
     "title": "Clear, actionable task title",
     "description": "Specific steps to complete this task",
-    "category": "category_slug",
+    "category": "one_of_the_exact_values_above",
     "estimatedMinutes": 5-10,
     "motivationalNote": "Brief, encouraging message"
   }
@@ -64,6 +72,7 @@ RESPONSE FORMAT (JSON):
 
 Generate 3 tasks focusing primarily on: ${categoryScores.map(c => c.label).join(' and ')}.
 Make sure at least 2 tasks target these weakest areas specifically.
+Use the exact category values listed above, not the labels.
 `
 
   try {
@@ -99,6 +108,22 @@ Make sure at least 2 tasks target these weakest areas specifically.
     tasks.forEach((task, index) => {
       if (!task.title || !task.description || !task.category || !task.estimatedMinutes || !task.motivationalNote) {
         throw new Error(`Invalid task structure at index ${index}`)
+      }
+      
+      // Validate category is a valid enum value
+      const validCategories: LifeCategory[] = ['health', 'career', 'relationships', 'finances', 'personal_growth', 'leisure']
+      if (!validCategories.includes(task.category as LifeCategory)) {
+        console.warn(`Invalid category "${task.category}" at index ${index}, using fallback`)
+        // Fix invalid category by mapping to valid one
+        const categoryMap: Record<string, LifeCategory> = {
+          'Career & Work': 'career',
+          'Health & Wellness': 'health',
+          'Relationships': 'relationships',
+          'Finances': 'finances',
+          'Personal Growth': 'personal_growth',
+          'Leisure & Fun': 'leisure'
+        }
+        task.category = categoryMap[task.category] || 'personal_growth'
       }
     })
 
