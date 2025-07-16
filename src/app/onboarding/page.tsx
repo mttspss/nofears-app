@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase'
 import { LifeAssessment } from '@/components/ui/life-assessment'
 import { LifeCategory } from '@/types/database'
 import { User } from '@supabase/supabase-js'
+import { Sparkles, Target, TrendingUp, Heart } from 'lucide-react'
 
 export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -81,17 +82,18 @@ export default function OnboardingPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+          <div className="text-2xl font-bold text-gray-900 mb-2">Preparing Your Journey</div>
+          <p className="text-gray-600">Setting up your transformation space...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {step === 'welcome' && (
         <WelcomeStep 
           user={user} 
@@ -120,101 +122,128 @@ function WelcomeStep({ user, onStart }: { user: User, onStart: () => void }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-2xl mx-auto text-center">
-        <div className="mb-8">
-          <div className="text-6xl mb-6">🌟</div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to Your Rebirth Journey, {userName}!
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 rounded-full text-sm font-medium mb-6 border border-blue-200">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Welcome to Your Transformation Journey
+          </div>
+          <div className="text-7xl mb-6">🌟</div>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Welcome, {userName}!<br />
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Your Rebirth Starts Here
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
             Every great comeback starts with knowing where you are. 
-            Let&apos;s take a moment to assess your current life situation across six key areas.
+            Let&apos;s take a moment to assess your current life situation and create your personalized transformation plan.
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+        {/* Main Content */}
+        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-white/20 p-8 md:p-12 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             What You&apos;ll Do Next:
           </h2>
           
-          <div className="space-y-4 text-left">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm">
+          <div className="space-y-6">
+            <div className="flex items-start space-x-4 p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
                 1
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">Rate Your Life Areas</h3>
-                <p className="text-gray-600">
-                  Honestly assess 6 key areas: Health, Career, Relationships, Finances, Personal Growth, and Leisure.
+                <h3 className="font-bold text-gray-900 text-lg mb-2 flex items-center space-x-2">
+                  <Target className="w-5 h-5 text-blue-600" />
+                  <span>Rate Your Life Areas</span>
+                </h3>
+                <p className="text-gray-700">
+                  Honestly assess 6 key areas: Health, Career, Relationships, Finances, Personal Growth, and Leisure. 
+                  This creates your unique Life Wheel baseline.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold text-sm">
+            <div className="flex items-start space-x-4 p-6 bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
+              <div className="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
                 2
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">Get Your Personal Action Plan</h3>
-                <p className="text-gray-600">
-                  Our AI will analyze your responses and create 3 personalized micro-tasks to start improving today.
+                <h3 className="font-bold text-gray-900 text-lg mb-2 flex items-center space-x-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  <span>Get Your Personal Action Plan</span>
+                </h3>
+                <p className="text-gray-700">
+                  Our AI analyzes your responses and creates 3 personalized micro-tasks to start improving today. 
+                  Each task takes just 5-10 minutes but creates lasting change.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-semibold text-sm">
+            <div className="flex items-start space-x-4 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-2xl border border-green-200">
+              <div className="w-12 h-12 bg-green-600 text-white rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
                 3
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">See Your Life Wheel</h3>
-                <p className="text-gray-600">
-                  Watch your visual life wheel fill up as you complete tasks and make progress.
+                <h3 className="font-bold text-gray-900 text-lg mb-2 flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <span>Watch Your Life Wheel Grow</span>
+                </h3>
+                <p className="text-gray-700">
+                  See your visual life wheel fill up as you complete tasks and make progress. 
+                  Celebrate every win and track your transformation journey.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-3">
-            <span className="text-2xl">🤖</span>
-            <h3 className="text-lg font-semibold text-blue-900">AI-Guided Assessment</h3>
+        {/* AI Guidance Box */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 mb-8 text-white text-center shadow-xl">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <span className="text-3xl">🤖</span>
+            <h3 className="text-2xl font-bold">AI-Guided Assessment</h3>
           </div>
-          <p className="text-blue-800 text-sm">
+          <p className="text-blue-100 text-lg leading-relaxed max-w-2xl mx-auto">
             Our AI will guide you through each area with thoughtful questions and provide personalized 
             insights to help you identify exactly where to focus your energy for maximum impact.
           </p>
         </div>
 
-        <div className="space-y-4">
+        {/* Call to Action */}
+        <div className="text-center space-y-6">
           <button
             onClick={onStart}
-            className="w-full bg-blue-600 text-white py-4 px-8 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-5 px-12 rounded-2xl text-xl font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-xl hover:shadow-2xl"
           >
             Start My Life Assessment
           </button>
           
-          <p className="text-sm text-gray-500">
-            ⏱️ Takes about 5-7 minutes • 🔒 Your responses are private and secure
+          <p className="text-gray-500">
+            ⏱️ Takes about 5-7 minutes • 🔒 Your responses are private and secure • ✨ Completely free
           </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-          {[
-            { icon: '🏃‍♂️', label: 'Health', desc: 'Physical & mental wellness' },
-            { icon: '💼', label: 'Career', desc: 'Work & professional growth' },
-            { icon: '❤️', label: 'Relationships', desc: 'Family, friends & social' },
-            { icon: '💰', label: 'Finances', desc: 'Money & financial security' },
-            { icon: '🌱', label: 'Growth', desc: 'Learning & development' },
-            { icon: '🎯', label: 'Leisure', desc: 'Fun & recreation' },
-          ].map((area, index) => (
-            <div key={index} className="bg-white rounded-lg p-4 text-center border border-gray-100">
-              <div className="text-2xl mb-2">{area.icon}</div>
-              <div className="font-semibold text-gray-900 text-sm">{area.label}</div>
-              <div className="text-xs text-gray-500">{area.desc}</div>
-            </div>
-          ))}
+        {/* Life Areas Preview */}
+        <div className="mt-16">
+          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">The 6 Life Areas We&apos;ll Assess</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { icon: '🏃‍♂️', label: 'Health', desc: 'Physical & mental wellness' },
+              { icon: '💼', label: 'Career', desc: 'Work & professional growth' },
+              { icon: '❤️', label: 'Relationships', desc: 'Family, friends & social' },
+              { icon: '💰', label: 'Finances', desc: 'Money & financial security' },
+              { icon: '🌱', label: 'Growth', desc: 'Learning & development' },
+              { icon: '🎯', label: 'Leisure', desc: 'Fun & recreation' },
+            ].map((area, index) => (
+              <div key={index} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/30 hover:bg-white/80 transition-all duration-300">
+                <div className="text-3xl mb-3">{area.icon}</div>
+                <div className="font-bold text-gray-900 mb-1">{area.label}</div>
+                <div className="text-sm text-gray-600">{area.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -224,46 +253,60 @@ function WelcomeStep({ user, onStart }: { user: User, onStart: () => void }) {
 function ProcessingStep() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-md mx-auto text-center">
-        <div className="mb-8">
-          <div className="relative">
-            <div className="w-24 h-24 border-4 border-blue-200 rounded-full mx-auto mb-6" />
-            <div className="absolute inset-0 w-24 h-24 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+      <div className="max-w-2xl mx-auto text-center">
+        <div className="mb-12">
+          <div className="relative mb-8">
+            <div className="w-32 h-32 border-8 border-blue-200 rounded-full mx-auto" />
+            <div className="absolute inset-0 w-32 h-32 border-8 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
           
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Creating Your Personal Action Plan
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Creating Your Personal Transformation Plan
           </h2>
           
-          <div className="space-y-3 text-gray-600">
-            <p className="flex items-center justify-center space-x-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>Analyzing your life assessment...</span>
-            </p>
-            <p className="flex items-center justify-center space-x-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>Identifying growth opportunities...</span>
-            </p>
-            <p className="flex items-center justify-center space-x-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              <span>Generating personalized micro-tasks...</span>
-            </p>
-            <p className="flex items-center justify-center space-x-2">
-              <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-              <span>Building your life wheel...</span>
-            </p>
+          <div className="space-y-4 text-lg">
+            <div className="flex items-center justify-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-gray-700">Analyzing your life assessment...</span>
+            </div>
+            <div className="flex items-center justify-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
+              <span className="text-gray-700">Identifying growth opportunities...</span>
+            </div>
+            <div className="flex items-center justify-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+              <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
+              <span className="text-gray-700">Generating personalized micro-tasks...</span>
+            </div>
+            <div className="flex items-center justify-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+              <div className="w-3 h-3 bg-pink-500 rounded-full animate-pulse" />
+              <span className="text-gray-700">Building your transformation dashboard...</span>
+            </div>
           </div>
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-          <div className="text-4xl mb-3">🎉</div>
-          <h3 className="text-lg font-semibold text-green-800 mb-2">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl p-8 text-white shadow-xl">
+          <div className="text-5xl mb-4">🎉</div>
+          <h3 className="text-2xl font-bold mb-4">
             You&apos;ve Taken the First Step!
           </h3>
-          <p className="text-green-700 text-sm">
-            Completing your assessment shows incredible courage. 
-            Your personalized dashboard is being prepared...
+          <p className="text-green-100 text-lg leading-relaxed">
+            Completing your assessment shows incredible courage and self-awareness. 
+            Your personalized transformation dashboard is being prepared with everything you need to start your comeback journey.
           </p>
+          <div className="mt-6 flex items-center justify-center space-x-6 text-sm">
+            <div className="flex items-center space-x-2">
+              <Heart className="w-4 h-4" />
+              <span>Self-Compassion</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Target className="w-4 h-4" />
+              <span>Focused Action</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="w-4 h-4" />
+              <span>Continuous Growth</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
